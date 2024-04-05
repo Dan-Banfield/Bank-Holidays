@@ -30,6 +30,17 @@ namespace Bank_Holidays.ViewModels
         }
         private string nextBankHoliday = "Unknown";
 
+        public string NextBankHolidayTitle
+        {
+            get => nextBankHolidayTitle;
+            set
+            {
+                nextBankHolidayTitle = value;
+                OnPropertyChanged(nameof(NextBankHolidayTitle));
+            }
+        }
+        private string nextBankHolidayTitle;
+
         public MainViewViewModel()
         {
         }
@@ -40,28 +51,33 @@ namespace Bank_Holidays.ViewModels
 
             API api = await GetAPIData();
 
-            DateTime nextDate = GetNextDate(api.englandandwales.events);
+            DateTime nextDate = GetNextDate(api.englandandwales.events, out int index);
             NextBankHoliday = nextDate.ToString("MM MMMM yyyy");
+            NextBankHolidayTitle = api.englandandwales.events[index].title;
 
             Loading = false;
         }
 
-        private DateTime GetNextDate(List<Event> list)
+        private DateTime GetNextDate(List<Event> list, out int index)
         {
             CultureInfo cultureInfo = new CultureInfo("en-GB");
             DateTime nextBankHoliday = DateTime.MaxValue;
+            int temp = 0;
 
-            Parallel.ForEach(list, bankHoliday =>
+            foreach (var bankHoliday in list)
             {
                 if (DateTime.TryParseExact(bankHoliday.date, "yyyy-MM-dd", cultureInfo, DateTimeStyles.None, out DateTime parsedDate))
                 {
                     if (parsedDate > DateTime.Now && parsedDate < nextBankHoliday)
                     {
                         nextBankHoliday = parsedDate;
+                        break;
                     }
                 }
-            });
+                temp++;
+            }
 
+            index = temp;
             return nextBankHoliday;
         }
 

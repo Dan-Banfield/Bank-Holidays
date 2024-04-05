@@ -48,9 +48,16 @@
                     IsRunning="{Binding Loading}" />
 
                 <Label
+                    IsEnabled="{Binding Loading, Converter={StaticResource BooleanConverter}}"
+                    IsVisible="{Binding Loading, Converter={StaticResource BooleanConverter}}"
                     Style="{StaticResource SubHeadline}"
-                    Text="Early May bank holiday"
+                    Text="{Binding NextBankHolidayTitle}"
                     HorizontalTextAlignment="Center" />
+
+                <ActivityIndicator
+                    IsEnabled="{Binding Loading}"
+                    IsVisible="{Binding Loading}"
+                    IsRunning="{Binding Loading}" />
 
             </VerticalStackLayout>
 
