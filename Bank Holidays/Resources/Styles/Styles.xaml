@@ -184,6 +184,7 @@
     </Style>
 
     <Style TargetType="Label" x:Key="Headline">
+        <Setter Property="FontFamily" Value="GoogleSansBold" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource MidnightBlue}, Dark={StaticResource White}}" />
         <Setter Property="FontSize" Value="32" />
         <Setter Property="HorizontalOptions" Value="Center" />
@@ -191,6 +192,7 @@
     </Style>
 
     <Style TargetType="Label" x:Key="SubHeadline">
+        <Setter Property="FontFamily" Value="GoogleSansMedium" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource MidnightBlue}, Dark={StaticResource White}}" />
         <Setter Property="FontSize" Value="24" />
         <Setter Property="HorizontalOptions" Value="Center" />

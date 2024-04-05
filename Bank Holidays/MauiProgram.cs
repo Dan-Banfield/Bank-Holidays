@@ -13,26 +13,26 @@ namespace Bank_Holidays
                 .ConfigureLifecycleEvents(events => 
                 {
 #if ANDROID
-                    events.AddAndroid(android => android.OnCreate((activity, bundle) => SetSystemBarColour(activity)));
+                    events.AddAndroid(android => android.OnCreate((activity, bundle) => SetSystemBarTransparency(activity)));
 
-                    static void SetSystemBarColour(Android.App.Activity activity)
+                    static void SetSystemBarTransparency(Android.App.Activity activity)
                     {
-                        var navigationBarColour = new Android.Graphics.Color(
-                            (byte)28,
-                            (byte)28,
-                            (byte)28,
-                            (byte)255
-                        );
-
-                        activity.Window.SetNavigationBarColor(navigationBarColour);
-                        activity.Window.SetStatusBarColor(navigationBarColour);
+                        activity.Window.AddFlags(Android.Views.WindowManagerFlags.LayoutNoLimits);
+                        activity.Window.AddFlags(Android.Views.WindowManagerFlags.TranslucentNavigation);
+                        activity.Window.AddFlags(Android.Views.WindowManagerFlags.TranslucentStatus);
+                        activity.Window.DecorView.SystemUiVisibility = (Android.Views.StatusBarVisibility)Android.Views.SystemUiFlags.Immersive;
                     }
 #endif
                 })
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("GoogleSans-Regular.ttf", "GoogleSansRegular");
+                    fonts.AddFont("GoogleSans-Bold.ttf", "GoogleSansBold");
+                    fonts.AddFont("GoogleSans-BoldItalic.ttf", "GoogleSansBoldItalic");
+                    fonts.AddFont("GoogleSans-Italic.ttf", "GoogleSansItalic");
+                    fonts.AddFont("GoogleSans-Semibold.ttf", "GoogleSansSemibold");
+                    fonts.AddFont("GoogleSans-Medium.ttf", "GoogleSansMedium");
+                    fonts.AddFont("GoogleSans-MediumItalic.ttf", "GoogleSansMediumItalic");
                 });
 
 #if DEBUG
