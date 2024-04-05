@@ -2,12 +2,20 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Bank_Holidays"
     xmlns:viewModels="clr-namespace:Bank_Holidays.ViewModels"
     x:Class="Bank_Holidays.Views.MainView">
 
     <ContentPage.BindingContext>
         <viewModels:MainViewViewModel />
     </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:BooleanConverter
+                x:Key="BooleanConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ScrollView>
         <VerticalStackLayout
@@ -29,8 +37,15 @@
                     HorizontalTextAlignment="Center" />
 
                 <Label
+                    IsEnabled="{Binding Loading, Converter={StaticResource BooleanConverter}}"
+                    IsVisible="{Binding Loading, Converter={StaticResource BooleanConverter}}"
                     Style="{StaticResource Headline}"
                     Text="{Binding NextBankHoliday}" />
+
+                <ActivityIndicator
+                    IsEnabled="{Binding Loading}"
+                    IsVisible="{Binding Loading}"
+                    IsRunning="{Binding Loading}" />
 
                 <Label
                     Style="{StaticResource SubHeadline}"

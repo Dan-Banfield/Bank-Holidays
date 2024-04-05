@@ -8,6 +8,17 @@ namespace Bank_Holidays.ViewModels
     {
         private const string API_ENDPOINT = "https://www.gov.uk/bank-holidays.json";
 
+        public bool Loading 
+        {
+            get => loading; 
+            set
+            {
+                loading = value;
+                OnPropertyChanged(nameof(Loading));
+            }
+        }
+        private bool loading = true;
+
         public string NextBankHoliday
         {
             get => nextBankHoliday;
@@ -25,10 +36,14 @@ namespace Bank_Holidays.ViewModels
 
         public async void OnLoad()
         {
+            Loading = true;
+
             API api = await GetAPIData();
 
             DateTime nextDate = GetNextDate(api.englandandwales.events);
             NextBankHoliday = nextDate.ToString("MM MMMM yyyy");
+
+            Loading = false;
         }
 
         private DateTime GetNextDate(List<Event> list)
