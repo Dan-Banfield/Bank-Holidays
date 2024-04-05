@@ -6,6 +6,9 @@
         {
             InitializeComponent();
 
+            // Force dark mode on Android.
+            UserAppTheme = AppTheme.Dark;
+
             MainPage = new AppShell();
         }
     }
