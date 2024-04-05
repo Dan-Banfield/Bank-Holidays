@@ -2,7 +2,12 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="Bank_Holidays.MainPage">
+    xmlns:viewModels="clr-namespace:Bank_Holidays.ViewModels"
+    x:Class="Bank_Holidays.Views.MainView">
+
+    <ContentPage.BindingContext>
+        <viewModels:MainViewViewModel />
+    </ContentPage.BindingContext>
 
     <ScrollView>
         <VerticalStackLayout
@@ -25,7 +30,7 @@
 
                 <Label
                     Style="{StaticResource Headline}"
-                    Text="6 May" />
+                    Text="{Binding NextBankHoliday}" />
 
                 <Label
                     Style="{StaticResource SubHeadline}"
