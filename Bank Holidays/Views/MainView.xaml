@@ -19,7 +19,7 @@
 
     <ScrollView>
         <VerticalStackLayout
-            Padding="30,50,30,0"
+            Padding="30,50,30,30"
             Spacing="25"
             VerticalOptions="FillAndExpand"
             HorizontalOptions="FillAndExpand">
@@ -65,9 +65,62 @@
                 Style="{StaticResource Headline}"
                 Text="Upcoming bank holidays in England and Wales"
                 HorizontalTextAlignment="Start"
-                HorizontalOptions="Start"/>
+                HorizontalOptions="Start" />
 
+            <Grid
+                RowDefinitions="*,*"
+                Padding="0">
+
+                <Grid
+                    ColumnDefinitions="*,*"
+                    Grid.Row="0">
+
+                    <Label
+                        Style="{StaticResource SubHeadline}"
+                        Text="Date"
+                        Grid.Row="0"
+                        Grid.Column="0" />
+
+                    <Label
+                        Style="{StaticResource SubHeadline}"
+                        Text="Day"
+                        Grid.Row="0"
+                        Grid.Column="1" />
+
+                </Grid>
+
+                <CollectionView
+                    ItemsSource="{Binding UpcomingBankHolidays}"
+                    Grid.Row="1">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                ColumnDefinitions="*,*"
+                                Grid.Row="1">
+
+                                <Label
+                                    Style="{StaticResource SubHeadline}"
+                                    Text="{Binding DateString}"
+                                    Padding="5"
+                                    Grid.Column="0" />
+
+                                <Label
+                                    Style="{StaticResource SubHeadline}"
+                                    Text="{Binding DayOfWeek}"
+                                    Padding="5"
+                                    Grid.Column="1" />
+
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+
+            <ActivityIndicator
+                IsEnabled="{Binding Loading}"
+                IsVisible="{Binding Loading}"
+                IsRunning="{Binding Loading}" />
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>

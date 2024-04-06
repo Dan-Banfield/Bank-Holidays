@@ -1,12 +1,15 @@
 ﻿using System.Text.Json;
 using Bank_Holidays.Models;
 using System.Globalization;
+using System.Collections.ObjectModel;
 
 namespace Bank_Holidays.ViewModels
 {
     public class MainViewViewModel : BindableObject
     {
         private const string API_ENDPOINT = "https://www.gov.uk/bank-holidays.json";
+
+        #region Properties
 
         public bool Loading 
         {
@@ -39,11 +42,13 @@ namespace Bank_Holidays.ViewModels
                 OnPropertyChanged(nameof(NextBankHolidayTitle));
             }
         }
-        private string nextBankHolidayTitle;
+        private string nextBankHolidayTitle = "Unknown";
 
-        public MainViewViewModel()
-        {
-        }
+        public ObservableCollection<Date> UpcomingBankHolidays { get; } = new ObservableCollection<Date>();
+
+        #endregion
+
+        public MainViewViewModel() { }
 
         public async void OnLoad()
         {
@@ -51,9 +56,15 @@ namespace Bank_Holidays.ViewModels
 
             API api = await GetAPIData();
 
-            DateTime nextDate = GetNextDate(api.englandandwales.events, out int index);
-            NextBankHoliday = nextDate.ToString("MM MMMM yyyy");
-            NextBankHolidayTitle = api.englandandwales.events[index].title;
+            if (api != null)
+            {
+                DateTime nextDate = GetNextDate(api.englandandwales.events, out int index);
+                NextBankHoliday = nextDate.ToString("MM MMMM yyyy");
+                NextBankHolidayTitle = api.englandandwales.events[index].title;
+
+                PopulateUpcomingBankHolidays(api.englandandwales.events);
+            }
+            else QuitWithError("Failed to get API data. Please connect to the internet and try again.");
 
             Loading = false;
         }
@@ -81,6 +92,27 @@ namespace Bank_Holidays.ViewModels
             return nextBankHoliday;
         }
 
+        private void PopulateUpcomingBankHolidays(List<Event> list)
+        {
+            CultureInfo cultureInfo = new CultureInfo("en-GB");
+
+            foreach (var bankHoliday in list)
+            {
+                if (DateTime.TryParseExact(bankHoliday.date, "yyyy-MM-dd", cultureInfo, DateTimeStyles.None, out DateTime parsedDate))
+                {
+                    if (parsedDate > DateTime.Now && parsedDate.Year == DateTime.Now.Year)
+                    {
+                        UpcomingBankHolidays.Add(new Date()
+                        {
+                            DateString = parsedDate.ToString("dd MMMM"),
+                            DayOfWeek = parsedDate.ToString("dddd"),
+                            BankHolidayName = bankHoliday.title
+                        });
+                    }
+                }
+            }
+        }
+
         private async Task<API> GetAPIData()
         {
             try
@@ -94,10 +126,7 @@ namespace Bank_Holidays.ViewModels
                     }
                 }
             }
-            catch (HttpRequestException) { QuitWithError("Ensure you have a valid internet connection and try again."); }
-            catch (Exception) { QuitWithError("An unexpected error has occurred."); }
-
-            return null;
+            catch { return null; }
         }
 
         private async void QuitWithError(string message)
