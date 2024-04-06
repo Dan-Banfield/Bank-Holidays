@@ -7,8 +7,6 @@ namespace Bank_Holidays.ViewModels
 {
     public class MainViewViewModel : BindableObject
     {
-        private const string API_ENDPOINT = "https://www.gov.uk/bank-holidays.json";
-
         #region Properties
 
         public bool Loading 
@@ -22,16 +20,16 @@ namespace Bank_Holidays.ViewModels
         }
         private bool loading = true;
 
-        public string NextBankHoliday
+        public string NextBankHolidayDateString
         {
-            get => nextBankHoliday;
+            get => nextBankHolidayDateString;
             set
             {
-                nextBankHoliday = value;
-                OnPropertyChanged(nameof(NextBankHoliday));
+                nextBankHolidayDateString = value;
+                OnPropertyChanged(nameof(NextBankHolidayDateString));
             }
         }
-        private string nextBankHoliday = "Unknown";
+        private string nextBankHolidayDateString = "Unknown";
 
         public string NextBankHolidayTitle
         {
@@ -50,6 +48,8 @@ namespace Bank_Holidays.ViewModels
 
         public MainViewViewModel() { }
 
+        #region Methods
+
         public async void OnLoad()
         {
             Loading = true;
@@ -58,15 +58,21 @@ namespace Bank_Holidays.ViewModels
 
             if (api != null)
             {
-                DateTime nextDate = GetNextDate(api.englandandwales.events, out int index);
-                NextBankHoliday = nextDate.ToString("MM MMMM yyyy");
-                NextBankHolidayTitle = api.englandandwales.events[index].title;
+                UpdateProperties(api);
+                Loading = false;
 
-                PopulateUpcomingBankHolidays(api.englandandwales.events);
+                return;
             }
-            else QuitWithError("Failed to get API data. Please connect to the internet and try again.");
+            QuitWithError("Failed to get API data. Please connect to the internet and try again.");
+        }
 
-            Loading = false;
+        private void UpdateProperties(API api)
+        {
+            DateTime nextDate = GetNextDate(api.englandandwales.events, out int index);
+            NextBankHolidayDateString = nextDate.ToString("dd MMMM yyyy");
+            NextBankHolidayTitle = api.englandandwales.events[index].title;
+
+            PopulateUpcomingBankHolidays(api.englandandwales.events);
         }
 
         private DateTime GetNextDate(List<Event> list, out int index)
@@ -79,7 +85,7 @@ namespace Bank_Holidays.ViewModels
             {
                 if (DateTime.TryParseExact(bankHoliday.date, "yyyy-MM-dd", cultureInfo, DateTimeStyles.None, out DateTime parsedDate))
                 {
-                    if (parsedDate > DateTime.Now && parsedDate < nextBankHoliday)
+                    if (parsedDate > DateTime.Now && parsedDate.Year == DateTime.Now.Year)
                     {
                         nextBankHoliday = parsedDate;
                         break;
@@ -113,13 +119,21 @@ namespace Bank_Holidays.ViewModels
             }
         }
 
+        private async void QuitWithError(string message)
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", $"{message}", "OK");
+            Application.Current.Quit();
+        }
+
+        #region API Methods
+
         private async Task<API> GetAPIData()
         {
             try
             {
                 using (HttpClient httpClient = new HttpClient())
                 {
-                    using (HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(API_ENDPOINT))
+                    using (HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(Constants.API_ENDPOINT))
                     {
                         Stream json = await httpResponseMessage.Content.ReadAsStreamAsync();
                         return await JsonSerializer.DeserializeAsync<API>(json);
@@ -129,10 +143,8 @@ namespace Bank_Holidays.ViewModels
             catch { return null; }
         }
 
-        private async void QuitWithError(string message)
-        {
-            await Application.Current.MainPage.DisplayAlert("Error", $"{message}", "OK");
-            Application.Current.Quit();
-        }
+        #endregion
+
+        #endregion
     }
 }

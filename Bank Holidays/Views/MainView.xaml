@@ -40,7 +40,7 @@
                     IsEnabled="{Binding Loading, Converter={StaticResource BooleanConverter}}"
                     IsVisible="{Binding Loading, Converter={StaticResource BooleanConverter}}"
                     Style="{StaticResource Headline}"
-                    Text="{Binding NextBankHoliday}" />
+                    Text="{Binding NextBankHolidayDateString}" />
 
                 <ActivityIndicator
                     IsEnabled="{Binding Loading}"
@@ -63,7 +63,7 @@
 
             <Label
                 Style="{StaticResource Headline}"
-                Text="Upcoming bank holidays in England and Wales"
+                Text="Upcoming bank holidays in England and Wales (2024)"
                 HorizontalTextAlignment="Start"
                 HorizontalOptions="Start" />
 

@@ -20,7 +20,7 @@ namespace Bank_Holidays
                         activity.Window.AddFlags(Android.Views.WindowManagerFlags.LayoutNoLimits);
                         activity.Window.AddFlags(Android.Views.WindowManagerFlags.TranslucentNavigation);
                         activity.Window.AddFlags(Android.Views.WindowManagerFlags.TranslucentStatus);
-                        activity.Window.DecorView.SystemUiVisibility = (Android.Views.StatusBarVisibility)Android.Views.SystemUiFlags.Immersive;
+                        activity.Window.DecorView.SystemUiFlags = Android.Views.SystemUiFlags.Immersive;
                     }
 #endif
                 })
